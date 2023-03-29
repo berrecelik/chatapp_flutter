@@ -1,9 +1,11 @@
+import 'package:chatapp_flutter/pages/home_page.dart';
 import 'package:chatapp_flutter/pages/login_page.dart';
 import 'package:chatapp_flutter/service/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/helper_function.dart';
 import '../widgets/widgets.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -16,9 +18,9 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
   final formKey = GlobalKey<FormState>();
-  String email = "";
-  String password = "";
-  String fullName = "";
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _fullNameController = TextEditingController();
   AuthService authService = AuthService();
 
   @override
@@ -67,6 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 20,
                       ),
                       TextFormField(
+                        controller: _fullNameController,
                         //copywith() we can add more values
                         decoration: textInputDecoration.copyWith(
                           labelText: "Full Name",
@@ -80,6 +83,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 20,
                       ),
                       TextFormField(
+                        controller: _emailController,
                         //copywith() we can add more values
                         decoration: textInputDecoration.copyWith(
                           labelText: "Email",
@@ -93,6 +97,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 20,
                       ),
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         //copywith() we can add more values
                         decoration: textInputDecoration.copyWith(
@@ -159,10 +164,15 @@ class _RegisterPageState extends State<RegisterPage> {
         _isLoading = true;
       });
       await authService
-          .registerUserWithEmailandPassword(fullName, email, password)
-          .then((value) {
+          .registerUserWithEmailandPassword(_fullNameController.text.trim(),
+              _emailController.text.trim(), _passwordController.text.trim())
+          .then((value) async {
         if (value == true) {
           //saving the shared preference state
+          await HelperFunctions.saveUserLoggedInStatus(true);
+          await HelperFunctions.saveUserEmailSF(_emailController.text.trim());
+          await HelperFunctions.saveUserNameSF(_fullNameController.text.trim());
+          nextScreenReplace(context, HomePage());
         } else {
           showSnackBar(context, Colors.red, value);
           setState(() {
