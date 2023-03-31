@@ -1,4 +1,5 @@
 import 'package:chatapp_flutter/helper/helper_function.dart';
+import 'package:chatapp_flutter/pages/group_info.dart';
 import 'package:chatapp_flutter/pages/login_page.dart';
 import 'package:chatapp_flutter/pages/profile_page.dart';
 import 'package:chatapp_flutter/pages/search_page.dart';
@@ -28,6 +29,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     gettingUserData();
     super.initState();
+  }
+
+  //STRING MANIPULATION
+  String getId(String res) {
+    return res.substring(0, res.indexOf("_"));
+  }
+
+  String getName(String res) {
+    return res.substring(res.indexOf("_") + 1);
   }
 
   gettingUserData() async {
@@ -64,16 +74,6 @@ class _HomePageState extends State<HomePage> {
                 Icons.search,
                 color: Colors.white,
               )),
-          IconButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                nextScreen(context, LoginPage());
-                print("LOGOUT!!");
-              },
-              icon: Icon(
-                Icons.logout,
-                color: Colors.white,
-              ))
         ],
         elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
@@ -110,11 +110,7 @@ class _HomePageState extends State<HomePage> {
               thickness: 1,
             ),
             ListTile(
-              onTap: () async {
-                authService.signOut().whenComplete(() {
-                  nextScreenReplace(context, LoginPage());
-                });
-              },
+              onTap: () {},
               selectedColor: Theme.of(context).primaryColor,
               selected: true,
               contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -264,7 +260,14 @@ class _HomePageState extends State<HomePage> {
                 return ListView.builder(
                   itemCount: snapshot.data['groups'].length,
                   itemBuilder: (context, index) {
-                    return Text("hello");
+                    //REVERSE INDEX
+                    int reverseIndex =
+                        snapshot.data['groups'].length - index - 1;
+                    return GroupTile(
+                        userName: snapshot.data["fullName"],
+                        groupId: getId(snapshot.data["groups"][reverseIndex]),
+                        groupName:
+                            getName(snapshot.data["groups"][reverseIndex]));
                   },
                 );
               } else {
