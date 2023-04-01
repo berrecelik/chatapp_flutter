@@ -264,10 +264,10 @@ class _HomePageState extends State<HomePage> {
                     int reverseIndex =
                         snapshot.data['groups'].length - index - 1;
                     return GroupTile(
-                        userName: snapshot.data["fullName"],
                         groupId: getId(snapshot.data["groups"][reverseIndex]),
                         groupName:
-                            getName(snapshot.data["groups"][reverseIndex]));
+                            getName(snapshot.data["groups"][reverseIndex]),
+                        userName: snapshot.data["fullName"]);
                   },
                 );
               } else {
